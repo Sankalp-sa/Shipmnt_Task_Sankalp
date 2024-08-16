@@ -46,3 +46,25 @@ export const isTeacher = async (req, res, next) => {
         console.log(error)
     }
 }
+
+// student access
+export const isStudent = async (req, res, next) => {
+    try {
+        
+        const user = await userModel.findById(req.body.userId);
+
+        if(user.role !== "student"){
+            return res.status(400).send({
+                success: false,
+                message: "Unauthorized",
+            });
+        }
+
+        next();
+
+    } catch (error) {
+
+        console.log(error)
+    }
+
+}

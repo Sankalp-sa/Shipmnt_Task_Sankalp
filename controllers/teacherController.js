@@ -1,4 +1,5 @@
 import classRoom from "../models/classRoomModel.js";
+import studentClass from "../models/studentClassModel.js";
 import task from "../models/taskModel.js";
 
 export const createClassroom = async (req, res) => {
@@ -73,6 +74,13 @@ export const addStudentController = async (req, res) => {
             });
         }
 
+        const newSt = new studentClass({
+            student: studentId,
+            classRoom: req.params.classroomId,
+        })
+
+        await newSt.save();
+
         classroomData.students.push(studentId);
 
         await classroomData.save();
@@ -116,6 +124,8 @@ export const removeStudentController = async (req, res) => {
                 message: "Unauthorized! you are not the owner of the classroom",
             });
         }
+
+        await studentClass.findOneAndDelete({ student: studentId, classroom: req.params.classroomId });
 
         classroomData.students.pull(studentId);
 
