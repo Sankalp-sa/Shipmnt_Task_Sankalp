@@ -20,7 +20,7 @@ JWT_SECRET = secret
 
 ### Start Backend
 
-* open a new terminal and cd to Backend folder
+* open a new terminal
 * install all dependencies
 ```
 npm install
