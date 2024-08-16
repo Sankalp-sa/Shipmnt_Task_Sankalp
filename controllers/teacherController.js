@@ -1,4 +1,5 @@
 import classRoom from "../models/classRoomModel.js";
+import task from "../models/taskModel.js";
 
 export const createClassroom = async (req, res) => {
 
@@ -137,3 +138,57 @@ export const removeStudentController = async (req, res) => {
     }
 
 };
+
+export const createTaskController = async (req, res) => {
+
+    try {
+
+        const { title, description, dueDate } = req.body;
+
+        const classroomData = await classRoom.findOne({ _id: req.params.classroomId });
+
+        if (!classroomData) {
+            return res.status(400).send({
+                success: false,
+                message: "Classroom does not exist",
+            });
+        }
+
+        if (classroomData.teacher.toString() !== req.body.userId) {
+            return res.status(400).send({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+        const newTask = new task({
+            title,
+            description,
+            dueDate,
+            classroom: req.params.classroomId,
+        });
+
+        const result = await newTask.save();
+
+        classroomData.tasks.push(result._id);
+
+        await classroomData.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Task created successfully",
+            task: result,
+        });
+
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+}

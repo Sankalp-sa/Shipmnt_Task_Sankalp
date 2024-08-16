@@ -16,18 +16,8 @@ const classRoomSchema = mongoose.Schema({
         ref: "User"
     }],
     tasks: [{
-        title: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            required: true
-        },
-        dueDate: {
-            type: Date,
-            required: true
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Task"
     }]
 }, {timestamps: true});
 
