@@ -185,7 +185,7 @@ export const createTaskController = async (req, res) => {
         const students = await studentClass.find({ classRoom: req.params.classroomId });
 
         students.forEach(async (student) => {
-            
+
             const st = new taskStatus({
                 student: student.student,
                 task: result._id,
@@ -319,6 +319,31 @@ export const deleteClassRoom = async (req, res) => {
             success: false,
             message: "Internal Server Error",
             error: error.message,
+        });
+
+    }
+
+}
+
+export const viewTaskSubmission = async (req, res) => {
+
+    try {
+        
+        const { classRoomId, taskId } = req.params;
+
+        const taskData = taskStatus.find({ classroom: classRoomId, task: taskId }).populate("student");
+
+        return res.status(200).send({
+            success: true,
+            taskData,
+        });
+        
+    } catch (error) {
+
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
         });
 
     }
