@@ -40,3 +40,100 @@ export const createClassroom = async (req, res) => {
     }    
 
 };
+
+export const addStudentController = async (req, res) => {
+
+    try {
+
+        const { studentId } = req.body;
+
+        const classroomData = await classRoom.findOne({ _id: req.params.classroomId });
+
+        if (!classroomData) {
+            return res.status(400).send({
+                success: false,
+                message: "Classroom does not exist",
+            });
+        }
+
+        if (classroomData.teacher.toString() !== req.body.userId) {
+            return res.status(400).send({
+                success: false,
+                message: "Unauthorized! you are not the owner of the classroom",
+            });
+        }
+
+        const studentExists = classroomData.students.includes(studentId);
+
+        if (studentExists) {
+            return res.status(400).send({
+                success: false,
+                message: "Student is already added to the classroom",
+            });
+        }
+
+        classroomData.students.push(studentId);
+
+        await classroomData.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Student added successfully",
+        });
+
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+};
+
+export const removeStudentController = async (req, res) => {
+
+    try {
+
+        const { studentId } = req.params;
+
+        const classroomData = await classRoom.findOne({ _id: req.params.classroomId });
+
+        if (!classroomData) {
+            return res.status(400).send({
+                success: false,
+                message: "Classroom does not exist",
+            });
+        }
+
+        if (classroomData.teacher.toString() !== req.body.userId) {
+            return res.status(400).send({
+                success: false,
+                message: "Unauthorized! you are not the owner of the classroom",
+            });
+        }
+
+        classroomData.students.pull(studentId);
+
+        await classroomData.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Student removed successfully",
+        });
+
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+};
