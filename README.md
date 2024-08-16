@@ -1,4 +1,4 @@
-# File Explorer
+# Classroom management readme
 
 ### Below is the link to deployed project
 
