@@ -192,3 +192,109 @@ export const createTaskController = async (req, res) => {
     }
 
 }
+
+export const getTeacherClassrooms = async (req, res) => {
+
+    try {
+
+        const classrooms = await classRoom.find({ teacher: req.body.userId });
+
+        return res.status(200).send({
+            success: true,
+            classrooms,
+        });
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+}
+
+export const EditClassRoom = async (req, res) => {
+
+    try {
+
+        const { classroomName } = req.body;
+
+        const classroomData = await classRoom.findOne({ _id: req.params.classroomId });
+
+        if (!classroomData) {
+            return res.status(400).send({
+                success: false,
+                message: "Classroom does not exist",
+            });
+        }
+
+        if (classroomData.teacher.toString() !== req.body.userId) {
+            return res.status(400).send({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+        classroomData.classroomName = classroomName;
+
+        await classroomData.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Classroom updated successfully",
+            classroom: classroomData,
+        });
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+}
+
+export const deleteClassRoom = async (req, res) => {
+
+    try {
+
+        const classroomData = await classRoom.findOne({ _id: req.params.classroomId });
+
+        if (!classroomData) {
+            return res.status(400).send({
+                success: false,
+                message: "Classroom does not exist",
+            });
+        }
+
+        if (classroomData.teacher.toString() !== req.body.userId) {
+            return res.status(400).send({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+        await classRoom.findByIdAndDelete(req.params.classroomId);
+
+        return res.status(200).send({
+            success: true,
+            message: "Classroom deleted successfully",
+        });
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+}
