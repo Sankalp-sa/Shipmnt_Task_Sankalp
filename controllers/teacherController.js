@@ -1,6 +1,7 @@
 import classRoom from "../models/classRoomModel.js";
 import studentClass from "../models/studentClassModel.js";
 import task from "../models/taskModel.js";
+import taskStatus from "../models/taskStatusModel.js";
 
 export const createClassroom = async (req, res) => {
 
@@ -178,7 +179,22 @@ export const createTaskController = async (req, res) => {
             classroom: req.params.classroomId,
         });
 
+
         const result = await newTask.save();
+
+        const students = await studentClass.find({ classRoom: req.params.classroomId });
+
+        students.forEach(async (student) => {
+            
+            const st = new taskStatus({
+                student: student.student,
+                task: result._id,
+                classroom: req.params.classroomId,
+                status: "pending",
+            });
+
+            await st.save();
+        });
 
         classroomData.tasks.push(result._id);
 

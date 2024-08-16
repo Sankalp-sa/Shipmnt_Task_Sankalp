@@ -1,5 +1,6 @@
 import studentClass from "../models/studentClassModel.js";
 import task from "../models/taskModel.js";
+import taskStatus from "../models/taskStatusModel.js";
 
 export const viewClassrooms = async (req, res) => {
 
@@ -61,3 +62,70 @@ export const viewTasks = async (req, res) => {
     }
 
 }
+
+export const submitTask = async (req, res) => {
+
+    try {
+
+        const task = await task.findOne({ _id: req.params.taskId });
+
+        if(!task){
+            return res.status(404).send({
+                success: false,
+                message: "Task not found",
+            });
+        }
+
+        const { studentId, taskId, classroomId } = req.params;
+
+        const st = taskStatus.findOne({ student: studentId, task: taskId, classroom: classroomId });
+
+        st.status = "completed";
+
+        await st.save();
+
+        return res.status(200).send({
+            success: true,
+            message: "Task submitted successfully",
+            result,
+        });
+
+        
+    } catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+
+}
+
+export const viewTaskStatus = async (req, res) => {
+
+    try {
+
+        const { studentId, classroomId } = req.params;
+
+        const st = await taskStatus.find({ student: studentId, classroom: classroomId }).populate("student");
+
+        return res.status(200).send({
+            success: true,
+            taskStatus: st,
+        });
+
+    }
+    catch (error) {
+        
+        return res.status(500).send({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+
+    }
+
+}
+
+
