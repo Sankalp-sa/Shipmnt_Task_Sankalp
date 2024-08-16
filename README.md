@@ -29,3 +29,21 @@ npm install
 ```
 npm start
 ```
+
+### Basic authentication will be required to use some requests
+
+##### Register Student:
+```
+localhost:8080/api/v1/auth/register
+```
+
+##### Login Student:
+```
+localhost:8080/api/v1/auth/login
+```
+
+#### From login api you will get the token use that token in header all other request
+### For other request view codebase
+
+
+
