@@ -1,6 +1,6 @@
 # Classroom management readme
 
-### Below is the link to deployed project
+### Below is the link to deployed API
 
 https://shipmnt-task-sankalp.vercel.app/
 
